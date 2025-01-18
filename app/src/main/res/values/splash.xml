@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MyApp.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1A1A1A</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_ecommerce_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Material3.Light</item>
+        <item name="background">@drawable/ic_logo_ecommerce_background</item>
+    </style>
+</resources>
