@@ -35,23 +35,44 @@
         android:textSize="12sp"/>
 
     <FrameLayout
+        android:id="@+id/ivFavourite"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_background"
+        android:elevation="4dp"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent"> <!-- Optional: You can use a rounded background -->
+
+        <ImageView
+            android:id="@+id/ivFavouriteImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_favorite_24" /> <!-- Adjust scaleType to fit the image properly -->
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/ivAddToCart"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_background"
         android:elevation="4dp"
-        android:background="@drawable/rounded_background"> <!-- Optional: You can use a rounded background -->
+        android:padding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivFavourite"> <!-- Optional: You can use a rounded background -->
 
-    <ImageView
-        android:id="@+id/ivFavourite"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/baseline_favorite_24"
-        android:scaleType="centerInside" /> <!-- Adjust scaleType to fit the image properly -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:src="@drawable/add_to_cart" /> <!-- Adjust scaleType to fit the image properly -->
 
-</FrameLayout>
+    </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

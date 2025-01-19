@@ -4,22 +4,21 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ecommerce.R
 import com.example.ecommerce.core.adapters.CategoriesAdapter
 import com.example.ecommerce.core.adapters.ProductsAdapter
+import com.example.ecommerce.core.models.CartItem
 import com.example.ecommerce.core.models.categories_response.Category
-import com.example.ecommerce.core.repository.EcommerceRepository
 import com.example.ecommerce.core.util.Resource
 import com.example.ecommerce.databinding.FragmentHomeBinding
 import com.example.ecommerce.ui.HomeViewModel
-import com.example.ecommerce.ui.HomeViewModelProvider
 import com.example.ecommerce.ui.activities.MainActivity
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -32,6 +31,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     lateinit var productsAdapter: ProductsAdapter
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view,savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
@@ -49,10 +49,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     viewModel.saveProduct(p)
                     Toast.makeText(context,"Product added successfully!", Toast.LENGTH_LONG).show()
                 }
+                val index = productsAdapter.differ.currentList.indexOf(p)
+                productsAdapter.differ.currentList[index].isFavorite = viewModel.isFavorite(p)
+                productsAdapter.notifyItemChanged(index)
             }
         }
-        productsAdapter.setCheckIsFavorite { p->
-            viewModel.isFavorite(p)
+        productsAdapter.setOnAddToCartClickListener {p->
+            runBlocking {
+                viewModel.saveCartItem(CartItem(
+                    null,p,1
+                ))
+            }
         }
         viewModel.categoriesResponse.observe(viewLifecycleOwner, Observer {response->
             when(response){
@@ -83,7 +90,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel.productsResponse.observe(viewLifecycleOwner, Observer {response->
             when(response){
                 is Resource.Success ->{
-                    productsAdapter.differ.submitList(response.data?.data?.data)
+                    val data = response.data?.data?.data
+                    data?.forEach { product ->
+                        GlobalScope.launch(Dispatchers.IO) {
+                            product.isFavorite = viewModel.isFavorite(product)
+                        }
+                    }
+                    productsAdapter.differ.submitList(data)
+
                     binding.progressBar.visibility = View.GONE
                     if(response.data?.data?.data.isNullOrEmpty()){
                         binding.tvHomePlaceholder.visibility = View.VISIBLE

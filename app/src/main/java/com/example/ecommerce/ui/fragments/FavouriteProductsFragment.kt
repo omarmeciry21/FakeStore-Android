@@ -16,6 +16,7 @@ import com.example.ecommerce.databinding.FragmentFavouriteProductsBinding
 import com.example.ecommerce.ui.HomeViewModel
 import com.example.ecommerce.ui.activities.MainActivity
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,12 +44,15 @@ class FavouriteProductsFragment : Fragment(R.layout.fragment_favourite_products)
                 viewModel.getSavedProducts()
             }
         }
-        productsAdapter.setCheckIsFavorite { p->
-            viewModel.isFavorite(p)
-        }
         viewModel.getSavedProducts().observe(viewLifecycleOwner,
             Observer { products ->
-                productsAdapter.differ.submitList(products)
+                val data = products
+                data?.forEach { product ->
+                    GlobalScope.launch(Dispatchers.IO) {
+                        product.isFavorite = viewModel.isFavorite(product)
+                    }
+                }
+                productsAdapter.differ.submitList(data)
 
             })
     }

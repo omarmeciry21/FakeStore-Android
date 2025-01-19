@@ -11,7 +11,7 @@ data class Product(
     val discount: Int?,
     val image: String?,
     val in_cart: Boolean?,
-    val in_favorites: Boolean?,
+    var isFavorite: Boolean?,
     val name: String?,
     val old_price: Double?,
     val price: Double?

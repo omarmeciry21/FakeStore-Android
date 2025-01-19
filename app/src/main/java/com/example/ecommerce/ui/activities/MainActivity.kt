@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ecommerce.R
+import com.example.ecommerce.core.local_db.CartItemDatabase
 import com.example.ecommerce.core.local_db.ProductsDatabase
 import com.example.ecommerce.core.repository.EcommerceRepository
 import com.example.ecommerce.databinding.ActivityMainBinding
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            HomeViewModelProvider(application, EcommerceRepository(ProductsDatabase(this)))
+            HomeViewModelProvider(application, EcommerceRepository(ProductsDatabase(this), CartItemDatabase(this)))
         ).get(HomeViewModel::class.java)
 
         val newsNavHostFragment= supportFragmentManager.findFragmentById(R.id.ecommerceMainFragment) as NavHostFragment

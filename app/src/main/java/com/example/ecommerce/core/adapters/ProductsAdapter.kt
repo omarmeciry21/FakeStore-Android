@@ -11,8 +11,6 @@ import com.bumptech.glide.Glide
 import com.example.ecommerce.R
 import com.example.ecommerce.core.models.products_response.Product
 import com.example.ecommerce.databinding.ItemProductBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(val binding:ItemProductBinding ) : RecyclerView.ViewHolder(binding.root)
@@ -45,21 +43,24 @@ class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
             Glide.with(this.root).load(product.image).into(imgProduct)
             tvProductName.text = product.name
             tvProductPrice.text = product.price.toString()
-            GlobalScope.launch {
 
-                if(checkIsFavorite?.let { it(product) } == true){
-                    ivFavourite.setImageResource(R.drawable.favorite_active)
-                }else{
-                    ivFavourite.setImageResource(R.drawable.favorite_inactive)
-                }
+            if (product.isFavorite == true) {
+                ivFavouriteImg.setImageResource(R.drawable.favorite_active)
+            } else {
+                ivFavouriteImg.setImageResource(R.drawable.favorite_inactive)
             }
             ivFavourite.setOnClickListener {
                 Log.i("Products Adapter","Calling onFavouriteClickListener {${onFavouriteClickListener}}")
                 onFavouriteClickListener?.let { it1 -> it1(product) }
                 notifyItemChanged(position)
             }
+
+            ivAddToCart.setOnClickListener{
+                onAddToCartClickListener?.let { it1 -> it1(product) }
+            }
         }
     }
+
 
     private var onItemClickListener : ((Product)->Unit)? = null
 
@@ -73,10 +74,9 @@ class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
         onFavouriteClickListener = listener
     }
 
-    private var checkIsFavorite :  (suspend (Product)->Boolean)? = null
+    private var onAddToCartClickListener : ((Product)->Unit)? = null
 
-    fun setCheckIsFavorite(listener:  (suspend(Product)->Boolean) ) {
-        checkIsFavorite = listener
+    fun setOnAddToCartClickListener(listener: ((Product)->Unit) ) {
+        onAddToCartClickListener = listener
     }
-
 }

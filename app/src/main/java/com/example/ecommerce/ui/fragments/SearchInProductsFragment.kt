@@ -17,6 +17,7 @@ import com.example.ecommerce.core.util.Resource
 import com.example.ecommerce.databinding.FragmentSearchInProductsBinding
 import com.example.ecommerce.ui.HomeViewModel
 import com.example.ecommerce.ui.activities.MainActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -44,10 +45,10 @@ class SearchInProductsFragment : Fragment(R.layout.fragment_search_in_products) 
                     viewModel.saveProduct(p)
                     Toast.makeText(context,"Product added successfully!", Toast.LENGTH_LONG).show()
                 }
+                val index = productsAdapter.differ.currentList.indexOf(p)
+                productsAdapter.differ.currentList[index].isFavorite = viewModel.isFavorite(p)
+                productsAdapter.notifyItemChanged(index)
             }
-        }
-        productsAdapter.setCheckIsFavorite { p->
-            viewModel.isFavorite(p)
         }
         var job: Job? =null
         binding.etSearch.addTextChangedListener{editable->
@@ -62,7 +63,13 @@ class SearchInProductsFragment : Fragment(R.layout.fragment_search_in_products) 
         viewModel.searchInProductsResponse.observe(viewLifecycleOwner, Observer {response->
             when(response){
                 is Resource.Success ->{
-                    productsAdapter.differ.submitList(response.data?.data?.data)
+                    val data = response.data?.data?.data
+                    data?.forEach { product ->
+                        GlobalScope.launch(Dispatchers.IO) {
+                            product.isFavorite = viewModel.isFavorite(product)
+                        }
+                    }
+                    productsAdapter.differ.submitList(data)
                     binding.progressBar.visibility = View.GONE
                     if(response.data?.data?.data.isNullOrEmpty()){
                         binding.tvHomePlaceholder.visibility = View.VISIBLE

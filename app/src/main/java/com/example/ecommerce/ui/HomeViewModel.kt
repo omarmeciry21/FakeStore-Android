@@ -2,8 +2,10 @@ package com.example.ecommerce.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.ecommerce.core.models.CartItem
 import com.example.ecommerce.core.models.categories_response.GetCategoriesResponse
 import com.example.ecommerce.core.models.products_response.Product
 import com.example.ecommerce.core.models.products_response.ProductsResponse
@@ -77,4 +79,17 @@ class HomeViewModel(val app: Application, val ecommerceRepository: EcommerceRepo
     fun deleteProduct(product: Product){viewModelScope.launch {
         ecommerceRepository.deleteProduct(product)
     }}
+
+
+    suspend fun saveCartItem(product: CartItem) { viewModelScope.launch {
+           ecommerceRepository.updateOrInsert(product)
+        }
+    }
+
+    fun getAllCartItems(): LiveData<List<CartItem>> = ecommerceRepository.getAllCartItems()
+
+    suspend fun deleteCartItem(product: CartItem) {viewModelScope.launch {
+            ecommerceRepository.deleteCartItem(product)
+        }
+    }
 }
