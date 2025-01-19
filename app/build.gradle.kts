@@ -1,7 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+//    id("kotlin-parcelize")
+//    kotlin("kapt") version "2.1.0"
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -37,11 +39,15 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.9.21")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
@@ -56,8 +62,10 @@ dependencies {
     // Room components
     implementation( "androidx.room:room-runtime:2.6.1")
     implementation ("androidx.room:room-ktx:2.6.1")
-    kapt ("androidx.room:room-compiler:2.6.1")
+    //noinspection KaptUsageInsteadOfKsp
+    kapt("androidx.room:room-compiler:2.6.1")
     implementation ("androidx.room:room-testing:2.6.1")
+
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3") // :contentReference[oaicite:11]{index=11}
@@ -74,7 +82,7 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1") // :contentReference[oaicite:19]{index=19}
-    kapt("com.github.bumptech.glide:compiler:4.15.1") // :contentReference[oaicite:20]{index=20}
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1") // :contentReference[oaicite:20]{index=20}
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // :contentReference[oaicite:14]{index=14}

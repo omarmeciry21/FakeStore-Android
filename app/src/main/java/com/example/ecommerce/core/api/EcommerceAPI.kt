@@ -4,6 +4,7 @@ import com.example.ecommerce.core.models.categories_response.GetCategoriesRespon
 import com.example.ecommerce.core.models.products_response.ProductsResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface EcommerceAPI {
@@ -15,7 +16,7 @@ interface EcommerceAPI {
         @Query("category_id") categoryId: Int
     ): Response<ProductsResponse>
 
-    @GET("products/search")
+    @POST("products/search")
     suspend fun searchInProducts(
         @Query("text") searchQuery: String
     ): Response<ProductsResponse>

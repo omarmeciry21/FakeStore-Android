@@ -1,14 +1,18 @@
 package com.example.ecommerce.core.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.ecommerce.R
 import com.example.ecommerce.core.models.products_response.Product
 import com.example.ecommerce.databinding.ItemProductBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(val binding:ItemProductBinding ) : RecyclerView.ViewHolder(binding.root)
@@ -41,6 +45,19 @@ class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
             Glide.with(this.root).load(product.image).into(imgProduct)
             tvProductName.text = product.name
             tvProductPrice.text = product.price.toString()
+            GlobalScope.launch {
+
+                if(checkIsFavorite?.let { it(product) } == true){
+                    ivFavourite.setImageResource(R.drawable.favorite_active)
+                }else{
+                    ivFavourite.setImageResource(R.drawable.favorite_inactive)
+                }
+            }
+            ivFavourite.setOnClickListener {
+                Log.i("Products Adapter","Calling onFavouriteClickListener {${onFavouriteClickListener}}")
+                onFavouriteClickListener?.let { it1 -> it1(product) }
+                notifyItemChanged(position)
+            }
         }
     }
 
@@ -48,6 +65,18 @@ class ProductsAdapter : RecyclerView.Adapter<ProductsAdapter.ItemViewHolder>() {
 
     fun setOnItemClickListener(listener: ((Product)->Unit) ) {
         onItemClickListener = listener
+    }
+
+    private var onFavouriteClickListener : ((Product)->Unit)? = null
+
+    fun setOnFavouriteClickListener(listener: ((Product)->Unit) ) {
+        onFavouriteClickListener = listener
+    }
+
+    private var checkIsFavorite :  (suspend (Product)->Boolean)? = null
+
+    fun setCheckIsFavorite(listener:  (suspend(Product)->Boolean) ) {
+        checkIsFavorite = listener
     }
 
 }
