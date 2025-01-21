@@ -22,7 +22,7 @@ class EcommerceRepository(val productsDatabase: ProductsDatabase,val cartItemsDa
     suspend fun isFavorite(product: Product) = productsDatabase.getProductDao().checkIfFavorite(product.id?:-1).size>0
 
 
-    suspend fun updateOrInsert(product: CartItem) = cartItemsDatabase.getProductDao().updateOrInsert(product)
+    suspend fun updateOrInsert(product: CartItem) :Long= cartItemsDatabase.getProductDao().updateOrInsert(product)
     fun getAllCartItems(): LiveData<List<CartItem>> = cartItemsDatabase.getProductDao().getAllCartItems()
-    suspend fun deleteCartItem(product: CartItem) = cartItemsDatabase.getProductDao().deleteCartItem(product)
+    suspend fun deleteCartItem(product: CartItem) :Int= cartItemsDatabase.getProductDao().deleteCartItem(product)
 }

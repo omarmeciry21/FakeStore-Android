@@ -1,6 +1,7 @@
 package com.example.ecommerce.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -81,15 +82,18 @@ class HomeViewModel(val app: Application, val ecommerceRepository: EcommerceRepo
     }}
 
 
-    suspend fun saveCartItem(product: CartItem) { viewModelScope.launch {
-           ecommerceRepository.updateOrInsert(product)
-        }
+    suspend fun saveCartItem(product: CartItem): Long {
+        val i = ecommerceRepository.updateOrInsert(product)
+        Log.i("CartItem Insert",i.toString())
+
+        return i
     }
 
     fun getAllCartItems(): LiveData<List<CartItem>> = ecommerceRepository.getAllCartItems()
 
     suspend fun deleteCartItem(product: CartItem) {viewModelScope.launch {
-            ecommerceRepository.deleteCartItem(product)
+           val i = ecommerceRepository.deleteCartItem(product)
+        Log.i("CartItem Delete",i.toString())
         }
     }
 }

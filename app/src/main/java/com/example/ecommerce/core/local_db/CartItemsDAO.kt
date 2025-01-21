@@ -11,12 +11,12 @@ import com.example.ecommerce.core.models.CartItem
 @Dao
 interface CartItemsDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateOrInsert(product: CartItem)
+    suspend fun updateOrInsert(product: CartItem) : Long
 
     @Query("SELECT * FROM cart_items")
     fun getAllCartItems():LiveData<List<CartItem>>
 
     @Delete
-    suspend fun deleteCartItem(product: CartItem)
+    suspend fun deleteCartItem(product: CartItem) : Int
 
 }

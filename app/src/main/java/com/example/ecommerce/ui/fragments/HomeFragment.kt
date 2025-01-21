@@ -17,6 +17,7 @@ import com.example.ecommerce.core.util.Resource
 import com.example.ecommerce.databinding.FragmentHomeBinding
 import com.example.ecommerce.ui.HomeViewModel
 import com.example.ecommerce.ui.activities.MainActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -56,9 +57,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
         productsAdapter.setOnAddToCartClickListener {p->
             runBlocking {
-                viewModel.saveCartItem(CartItem(
+                val id = viewModel.saveCartItem(CartItem(
                     null,p,1
                 ))
+
+                Snackbar.make(binding.root,"Product added to cart successfully!", Snackbar.LENGTH_LONG).apply {
+                    setAction("Undo"){
+                        runBlocking {
+                            viewModel.deleteCartItem(CartItem(
+                                id.toInt(),p,1
+                            ))
+                        }
+                    }
+                    show()
+                }
             }
         }
         viewModel.categoriesResponse.observe(viewLifecycleOwner, Observer {response->
